@@ -1,0 +1,1 @@
+{"private":true,"type":"module","scripts":{"start":"node server/residents-server.mjs","test:residents":"node --test tests/residents-*.test.mjs"}}

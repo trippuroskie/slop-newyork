@@ -1,3 +1,9 @@
+// LLM residents
+async function initResidents(options) {
+  const residentsModule = await import('./residents/residents.js');
+  return residentsModule.initResidents(options);
+}
+// End LLM residents
 import * as THREE from 'three/webgpu';
 import { pass, mrt, output, normalView, positionView, metalness, roughness, vec2, smoothstep } from 'three/tsl';
 import { ssr } from 'three/addons/tsl/display/SSRNode.js';
@@ -125,6 +131,14 @@ async function initApp() {
 
   const cameraSystem = new CameraSystem(renderer.domElement, controllerManager);
   const touchControls = new TouchControls(controllerManager);
+  // LLM residents
+  let residents;
+  try {
+    residents = await initResidents({ scene, cameraSystem, cityBlocks, controllerManager });
+  } catch {
+    console.warn('LLM residents unavailable');
+  }
+  // End LLM residents
   const soundButton = document.getElementById('btn-sound');
   const audioSystem = new CityAudioSystem({ controllerManager, trafficSystem, highwayTraffic, streetDetails }, {
     onStateChange: updateSoundButton
@@ -666,6 +680,7 @@ async function initApp() {
     lastTime = now;
     const dt = Math.min(Math.max(rawDt, 0.001), 0.05);
     elapsed += dt;
+    try { residents?.update(dt); } catch {} // LLM residents
 
     // Update 3rd-person controllers, camera, signals, traffic & vehicle collisions, building LODs, and dynamic shadow focus
     gamepadControls.update(dt);

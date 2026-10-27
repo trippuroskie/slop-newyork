@@ -1,1 +1,7 @@
 .DS_Store
+# // LLM residents
+.env
+.env.*
+!.env.example
+data/
+node_modules/
